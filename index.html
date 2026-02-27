@@ -1,202 +1,1149 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AquaGuard Field Tool</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AquaGuard Field Decision & Systems Tool</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-  background: #f4f7fb;
-  color: #0c1220;
-}
+  :root{
+    --navy:#173a5a;
+    --navy2:#0f2b44;
+    --pink:#d94aa6;
+    --pink2:#ff5bbb;
 
-.hero {
-  position: relative;
-  padding: 30px;
-  color: white;
-  background: linear-gradient(135deg,#173a5a,#0f2b44);
-  overflow: hidden;
-}
+    --ink:#0c1220;
+    --muted:#5b667a;
+    --bg:#f4f7fb;
+    --card:#ffffff;
+    --line:#d9e2ee;
 
-.hero::after{
-  content:"";
-  position:absolute;
-  top:-100px;
-  right:-100px;
-  width:300px;
-  height:300px;
-  background:linear-gradient(135deg,#d94aa6,#ff5bbb);
-  transform:rotate(25deg);
-  border-radius:40px;
-  opacity:.4;
-}
+    --good:#0a6b2d;
+    --bad:#8b0000;
+  }
 
-.hero-content{
-  position:relative;
-  z-index:2;
-}
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+  }
 
-.logo{
-  width:70px;
-  margin-bottom:10px;
-}
+  /* ===== Header / Brand ===== */
+  .header{
+    background:linear-gradient(135deg,var(--navy),var(--navy2));
+    color:#fff;
+    padding:26px 16px 0;
+    position:relative;
+    overflow:hidden;
+  }
+  .header::before{
+    content:"";
+    position:absolute; inset:-60px -60px auto auto;
+    width:280px;height:280px;
+    background:linear-gradient(135deg,rgba(217,74,166,.75),rgba(255,91,187,.15));
+    border-radius:48px;
+    transform:rotate(18deg);
+    opacity:.9;
+  }
+  .headerInner{
+    max-width:1200px;
+    margin:0 auto;
+    display:flex;
+    gap:14px;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    position:relative;
+    z-index:1;
+    padding-bottom:14px;
+  }
+  .brand{
+    display:flex;
+    gap:14px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .logoWrap{
+    width:96px;height:96px;
+    border-radius:18px;
+    background:rgba(255,255,255,.10);
+    border:1px solid rgba(255,255,255,.18);
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+  }
+  .logoWrap img{width:100%;height:100%;object-fit:contain;padding:10px}
+  .logoFallback{
+    font-weight:900;
+    letter-spacing:.6px;
+    font-size:26px;
+    display:none;
+  }
+  .titleBlock h1{
+    margin:0;
+    font-size:20px;
+    font-weight:900;
+    line-height:1.1;
+  }
+  .titleBlock .sub{
+    margin:6px 0 0;
+    color:rgba(255,255,255,.86);
+    font-size:13px;
+    max-width:86ch;
+  }
+  .headerBtns{
+    display:flex;gap:8px;flex-wrap:wrap;
+  }
+  button{
+    padding:10px 14px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,.25);
+    background:rgba(255,255,255,.10);
+    color:#fff;
+    font-weight:900;
+    cursor:pointer;
+    backdrop-filter: blur(6px);
+  }
+  button:hover{background:rgba(255,255,255,.16)}
+  button.primary{
+    background:linear-gradient(135deg,var(--pink),var(--pink2));
+    border-color:rgba(255,255,255,.15);
+    color:#0b1020;
+  }
 
-.hero-image{
-  position:absolute;
-  inset:0;
-  background-size:cover;
-  background-position:center;
-  opacity:.25;
-  z-index:1;
-}
+  /* ===== Tabs ===== */
+  .tabs{
+    max-width:1200px;
+    margin:0 auto;
+    padding:0 16px 14px;
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    position:relative;
+    z-index:1;
+  }
+  .tabBtn{
+    padding:10px 12px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.24);
+    background:rgba(255,255,255,.10);
+    color:#fff;
+    font-weight:900;
+    cursor:pointer;
+  }
+  .tabBtn[aria-selected="true"]{
+    background:rgba(255,255,255,.92);
+    color:var(--navy2);
+    border-color:rgba(255,255,255,.92);
+  }
 
-button{
-  padding:10px 14px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:bold;
-}
+  /* ===== Layout ===== */
+  .wrap{max-width:1200px;margin:14px auto 26px;padding:0 16px}
+  .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:12px}
+  @media(max-width:950px){ .grid{grid-template-columns:1fr} }
 
-.primary{
-  background:#d94aa6;
-  color:#fff;
-}
+  .panel{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:14px;
+    box-shadow:0 10px 22px rgba(0,0,0,.06);
+  }
+  .panel h2{margin:0 0 8px;font-size:16px}
+  .muted{color:var(--muted)}
+  .small{font-size:12px}
+  .hr{height:1px;background:var(--line);margin:12px 0}
 
-.container{
-  padding:20px;
-  max-width:1000px;
-  margin:auto;
-}
+  textarea, input[type="text"], select{
+    width:100%;
+    padding:12px;
+    border-radius:12px;
+    border:1px solid var(--line);
+    font-size:14px;
+    background:#fff;
+  }
+  textarea{min-height:120px;resize:vertical;line-height:1.35}
 
-textarea{
-  width:100%;
-  padding:12px;
-  border-radius:10px;
-  border:1px solid #ccc;
-  min-height:120px;
-}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .kpi{
+    margin-top:10px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+  }
+  @media(max-width:700px){ .kpi{grid-template-columns:repeat(2,1fr)} }
+  .stat{
+    border:1px dashed var(--line);
+    border-radius:14px;
+    padding:10px;
+    text-align:center;
+    color:var(--muted);
+    background:#fff;
+  }
+  .stat b{color:var(--ink)}
+  .pill{
+    display:inline-block;
+    padding:4px 10px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    font-size:12px;
+    background:#fff;
+    font-weight:900;
+  }
+  .danger{color:var(--bad)}
+  details{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:10px;
+    margin:8px 0;
+  }
+  summary{cursor:pointer;font-weight:900}
+  .tag{font-size:12px;color:var(--muted);margin-left:8px;font-weight:800}
+  ul{margin:6px 0 0 18px}
+  li{margin:4px 0}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media(max-width:750px){ .two{grid-template-columns:1fr} }
+  .kbd{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+    font-size:12px;
+    background:#f1f3f7;
+    border:1px solid var(--line);
+    padding:2px 6px;
+    border-radius:8px;
+  }
 
-.results{
-  margin-top:20px;
-  padding:20px;
-  background:white;
-  border-radius:12px;
-  border:1px solid #ddd;
-}
+  /* ===== Customer summary ===== */
+  .summaryBox{
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:12px;
+    background:#fff;
+  }
+  .summaryHeader{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .badge{
+    display:inline-block;
+    padding:4px 10px;
+    border-radius:999px;
+    background:rgba(23,58,90,.08);
+    border:1px solid rgba(23,58,90,.18);
+    color:var(--navy2);
+    font-weight:900;
+    font-size:12px;
+  }
 
-footer{
-  text-align:center;
-  padding:20px;
-  font-size:13px;
-  color:#666;
-}
+  /* ===== Customer-friendly toggle ===== */
+  .toggleRow{
+    display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+    padding:10px;
+    border:1px dashed var(--line);
+    border-radius:14px;
+    background:#fff;
+  }
+  .switch{
+    display:inline-flex;align-items:center;gap:10px;
+    font-weight:900;
+  }
+  .switch input{transform:scale(1.15)}
+  .noteBox{
+    border-left:4px solid var(--pink);
+    padding:10px 12px;
+    border-radius:10px;
+    background:#fff;
+    border:1px solid var(--line);
+  }
+
+  /* ===== Footer ===== */
+  footer{
+    text-align:center;
+    color:var(--muted);
+    font-size:12px;
+    margin-top:14px;
+  }
+  footer b{color:var(--ink)}
+
+  /* ===== Tab panels ===== */
+  [data-tabpanel]{display:none}
+  [data-tabpanel].active{display:block}
+
+  /* ===== Print ===== */
+  @media print{
+    body{background:#fff}
+    .headerBtns,.tabs,.no-print{display:none !important}
+    .wrap{max-width:none;margin:0;padding:0}
+    .panel{box-shadow:none}
+    .header{padding:18px 16px 8px}
+    .logoWrap{width:64px;height:64px}
+    a[href]:after{content:""}
+  }
 </style>
 </head>
 
 <body>
 
-<div class="hero">
-  <div class="hero-image" id="heroBg"></div>
+<header class="header">
+  <div class="headerInner">
+    <div class="brand">
+      <div class="logoWrap" aria-label="AquaGuard logo">
+        <img id="logoImg" src="./assets/logo.png" alt="AquaGuard logo"
+             onerror="this.style.display='none';document.getElementById('logoFallback').style.display='block';" />
+        <div id="logoFallback" class="logoFallback">AG</div>
+      </div>
+      <div class="titleBlock">
+        <h1>AquaGuard — Field Decision & Systems Tool</h1>
+        <div class="sub">
+          Condition → ranked recommendations • systems library • “when NOT to use” • customer summary • print → save PDF
+        </div>
+      </div>
+    </div>
 
-  <div class="hero-content">
-    <img src="./assets/logo.png" class="logo" alt="Logo">
-
-    <h1>AquaGuard Field Cheat Sheet Tool</h1>
-    <p>Condition → Project Decision Logic</p>
-
-    <button class="primary" onclick="analyze()">Analyze Condition</button>
-    <button onclick="window.print()">Print / Save PDF</button>
+    <div class="headerBtns no-print">
+      <button class="primary" id="btnAnalyze" type="button">Analyze</button>
+      <button id="btnCustomer" type="button">Customer Summary</button>
+      <button id="btnPrint" type="button">Print / Save PDF</button>
+      <button id="btnReset" type="button">Reset</button>
+    </div>
   </div>
-</div>
 
-<div class="container">
-
-  <h2>Observed Condition</h2>
-  <textarea id="conditionInput" placeholder="Example: efflorescence, damp walls, water stains"></textarea>
-
-  <div class="results" id="results">
-    Type conditions above and press Analyze.
+  <div class="tabs no-print" role="tablist" aria-label="Tool tabs">
+    <button class="tabBtn" role="tab" aria-selected="true" aria-controls="tab-decision" id="tabbtn-decision" type="button">Decision Tool</button>
+    <button class="tabBtn" role="tab" aria-selected="false" aria-controls="tab-byproject" id="tabbtn-byproject" type="button">Systems by Project</button>
+    <button class="tabBtn" role="tab" aria-selected="false" aria-controls="tab-library" id="tabbtn-library" type="button">Full Library</button>
+    <button class="tabBtn" role="tab" aria-selected="false" aria-controls="tab-instructions" id="tabbtn-instructions" type="button">Instructions</button>
   </div>
+</header>
 
-</div>
+<main class="wrap">
 
-<footer>
-  Tool created by <strong>Matthew Urbanski</strong> • Certified Field Inspector
-</footer>
+  <!-- DECISION TOOL -->
+  <section id="tab-decision" data-tabpanel class="active">
+    <div class="grid">
+      <section class="panel">
+        <h2>Condition → Project Recommendation</h2>
+        <div class="muted small">
+          Paste symptoms. Tool scores matches and returns top projects + systems. Use judgment; confirm spec thresholds with Production.
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="toggleRow no-print">
+          <label class="switch">
+            <input id="customerMode" type="checkbox" />
+            Customer-friendly output
+          </label>
+          <div class="muted small">Hides internal install rules in the main recommendation view.</div>
+        </div>
+
+        <div style="margin-top:10px" class="no-print">
+          <textarea id="conditionInput" placeholder="Example: efflorescence + damp walls + musty smell; bowed wall + horizontal cracking; sloped floors + doors sticking; uneven driveway trip hazard"></textarea>
+        </div>
+
+        <div class="row" style="margin-top:10px">
+          <div style="flex:1;min-width:220px">
+            <div class="muted small">Optional: filter by area</div>
+            <select id="areaSelect">
+              <option value="Any">Any area</option>
+              <option value="Basement">Basement</option>
+              <option value="Crawlspace">Crawlspace</option>
+              <option value="Slab">Slab</option>
+            </select>
+          </div>
+          <div style="flex:1;min-width:220px">
+            <div class="muted small">Quick search (library)</div>
+            <input id="quickSearch" type="text" placeholder="Search: intellijack, S-4 beam, sump, crawlseal, helical, poly..." />
+          </div>
+        </div>
+
+        <div class="kpi">
+          <div class="stat">Top score <b id="topScore">—</b></div>
+          <div class="stat">Projects <b id="projectCount">0</b></div>
+          <div class="stat">Systems <b id="systemCount">0</b></div>
+          <div class="stat">Mode <b id="modeLabel">Internal</b></div>
+        </div>
+
+        <div class="hr"></div>
+        <div id="results"></div>
+
+        <div class="hr"></div>
+        <div id="customerSummaryArea"></div>
+
+        <div class="hr"></div>
+        <div class="noteBox">
+          <div class="small"><b>PDF:</b> Click <span class="kbd">Print / Save PDF</span> (or <span class="kbd">Ctrl/Cmd + P</span>) → “Save as PDF”.</div>
+        </div>
+      </section>
+
+      <aside class="panel">
+        <h2>Relevant Systems (from top matches)</h2>
+        <div class="muted small">Only systems referenced by your top recommendations show here.</div>
+        <div class="hr"></div>
+        <div id="quickSystems"></div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- SYSTEMS BY PROJECT -->
+  <section id="tab-byproject" data-tabpanel>
+    <section class="panel">
+      <h2>Systems by Project</h2>
+      <div class="muted small">Pick a project to see systems + interactions + limitations.</div>
+      <div class="hr"></div>
+      <div class="row no-print">
+        <div style="flex:1;min-width:240px">
+          <div class="muted small">Choose project</div>
+          <select id="projSelect"></select>
+        </div>
+        <div style="flex:2;min-width:260px" class="muted small">
+          Low clutter view: one project at a time.
+        </div>
+      </div>
+      <div class="hr"></div>
+      <div id="projView"></div>
+    </section>
+  </section>
+
+  <!-- FULL LIBRARY -->
+  <section id="tab-library" data-tabpanel>
+    <section class="panel">
+      <h2>Full System Library</h2>
+      <div class="muted small">All systems grouped by bucket. Search is case-insensitive.</div>
+      <div class="hr"></div>
+      <div class="row no-print">
+        <div style="flex:1;min-width:220px">
+          <input id="librarySearch" type="text" placeholder="Search library..." />
+        </div>
+        <div style="flex:1;min-width:220px">
+          <select id="libraryArea">
+            <option value="Any">Any area</option>
+            <option value="Basement">Basement</option>
+            <option value="Crawlspace">Crawlspace</option>
+            <option value="Slab">Slab</option>
+          </select>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <div id="library"></div>
+    </section>
+  </section>
+
+  <!-- INSTRUCTIONS -->
+  <section id="tab-instructions" data-tabpanel>
+    <section class="panel">
+      <h2>How to Use</h2>
+      <ul>
+        <li><b>Decision Tool</b>: type symptoms → click <span class="kbd">Analyze</span>.</li>
+        <li>Keyboard: <b>Tab</b>/<b>Shift+Tab</b> moves focus; <b>Enter</b> activates focused button.</li>
+        <li>PDF: <span class="kbd">Print / Save PDF</span> or <span class="kbd">Ctrl/Cmd + P</span> → Save as PDF.</li>
+        <li><b>Systems by Project</b>: organized “low clutter” view.</li>
+        <li><b>Full Library</b>: searchable reference.</li>
+      </ul>
+
+      <div class="hr"></div>
+
+      <h2>Assets</h2>
+      <div class="muted small">
+        This version uses the logo only. Place: <span class="kbd">./assets/logo.png</span>
+      </div>
+
+      <div class="hr"></div>
+
+      <h2>Production Inputs Needed (later)</h2>
+      <ul class="small muted">
+        <li>Final naming conventions (SettleStop / AquaStop / legacy labels).</li>
+        <li>Thresholds: deflection limits, torque targets, RH targets, pump sizing rules.</li>
+        <li>Customer-facing language approval for printed summary.</li>
+      </ul>
+    </section>
+  </section>
+
+  <footer>
+    Tool created by <b>Matthew Urbanski</b> • Certified Field Inspector • AquaGuard Foundation Solutions
+  </footer>
+</main>
 
 <script>
+/* =========================
+   TABS
+   ========================= */
+var tabButtons = ["tabbtn-decision","tabbtn-byproject","tabbtn-library","tabbtn-instructions"];
+function showTab(tabId){
+  for (var i=0;i<tabButtons.length;i++){
+    var btn=document.getElementById(tabButtons[i]);
+    btn.setAttribute("aria-selected", (btn.getAttribute("aria-controls")===tabId) ? "true":"false");
+  }
+  var panels=document.querySelectorAll("[data-tabpanel]");
+  for (var j=0;j<panels.length;j++){
+    panels[j].classList.remove("active");
+    panels[j].style.display="none";
+  }
+  var active=document.getElementById(tabId);
+  active.classList.add("active");
+  active.style.display="block";
+}
+document.getElementById("tabbtn-decision").addEventListener("click", function(){showTab("tab-decision");});
+document.getElementById("tabbtn-byproject").addEventListener("click", function(){showTab("tab-byproject");});
+document.getElementById("tabbtn-library").addEventListener("click", function(){showTab("tab-library");});
+document.getElementById("tabbtn-instructions").addEventListener("click", function(){showTab("tab-instructions");});
+showTab("tab-decision");
 
-/* HERO IMAGE ROTATOR (.JPG uppercase enforced) */
-const heroImages = [
-  "./assets/hero-foundation.JPG",
-  "./assets/hero-crawlspace.JPG",
-  "./assets/hero-basement.JPG"
+/* =========================
+   FIELD RULES (your added notes)
+   ========================= */
+var PSFF_INTERNAL_RULES = [
+  "If using IntelliJacks for lift: target ~every 5' spacing; 8' max spacing (minimal lift).",
+  "8'–10' span: 2 jacks (no lift at 10' — stabilization/support only).",
+  "12' span: 3 jacks.",
+  "Always evaluate joist/beam condition before lift; confirm load path and bearing.",
+  "When utilizing S-4 beams: always check if blocking is needed and verify condition of joists/beams."
 ];
 
-let heroIndex = 0;
-const heroBg = document.getElementById("heroBg");
+/* =========================
+   DATA
+   ========================= */
+var PROJECTS = [
+  { id:"CGWS", name:"Control Groundwater Seepage (CGWS)", area:"Any",
+    summary:"Capture/route bulk water to a sump and discharge away from the foundation.",
+    how:["Collect water at perimeter/footing line","Route to basin/sump","Pump to safe discharge","Prevent recirculation with discharge/downspout control"],
+    notfor:["Wall bowing without stabilization (pair systems)","No discharge plan (recycles water)","Flood volume beyond pump capacity (needs redundancy/upgrade)"],
+    keywords:["water","seep","seepage","standing water","puddle","wet floor","leak","flood","groundwater","drain","sump","pump"],
+    systems:["Aquastop Perimeter Drain (Full/Partial)","Aquastop Basement Gutter (Full/Partial)","Aquastop Grate","Aquastop CrawlDrain","Aquastop Triple Pumping System","Aquastop Single Pumping Systems","Safe-dri Battery Back-up","FreezeGuard","Extend Discharge Line","Downspout Extensions","Flat yardwell"]
+  },
+  { id:"CWM", name:"Control Wall Moisture (CWM)", area:"Basement",
+    summary:"Manage wall dampness/vapor with interior barrier/liner systems and drainage integration.",
+    how:["Pair with drainage when bulk water exists","Isolate interior air from masonry","Route moisture down to drainage path where designed"],
+    notfor:["Active bulk water without drainage","Structural movement (needs stabilization)","Cases requiring exterior-only waterproofing scope"],
+    keywords:["efflorescence","damp wall","wet wall","peeling paint","wall moisture","water stains"],
+    systems:["Aquastop Wall Seal","Bright Wall (B.S.)","Cleanspace Wall (B.S.)","Zen Wall (B.S.)","Wall Panel","Aquastop Basement Gutter (Full/Partial)"]
+  },
+  { id:"CTE", name:"Control the Environment (CTE)", area:"Any",
+    summary:"Reduce humidity, odors, and moisture load with dehumidification/air management + sealing.",
+    how:["Reduce air leakage (liners/encapsulation/doors)","Dehumidify to target RH (Production defines)","Drain condensate reliably","Optional ducting for distribution"],
+    notfor:["Bulk water not controlled (dehumidifier won’t keep up)","Active plumbing leaks (fix first)","No condensate drain plan/service access"],
+    keywords:["humidity","musty","mold smell","odor","condensation","high moisture","wet insulation","sweating pipes"],
+    systems:["Aquastop Basement Air System","Aquastop Crawlspace Air System","Sani-Dry Upright (B.S. Air System)","Sani-Dry Sedona (B.S.)","Sante Fe Elite","Sante Fe Edge","Condensation Pump","Duct Kit","Remote Hygrometer","Aquastop CrawlSeal","Aquastop Crawlspace Door"]
+  },
+  { id:"PSYW", name:"Permanently Stabilize Your Walls (PSYW)", area:"Basement",
+    summary:"Stop wall movement (bowing/horizontal cracking) from lateral soil pressure.",
+    how:["Match system to wall type + displacement","Brace interior or restrain/pull with anchors","Pair with water control to reduce pressure over time"],
+    notfor:["Settlement without lateral pressure indicators (use perimeter stabilization)","Severe structural compromise requiring engineer/rebuild","No access for required system (anchors need exterior access)"],
+    keywords:["bowed wall","bowing","horizontal crack","horizontal cracking","tipping wall","shearing","leaning wall"],
+    systems:["SettleStop Carbon Fiber","SettleStop IntelliBrace","SettleStop Earth Anchor","SettleStop Helical Anchor","Geo-Lock Anchor (B.S. Anchor)","Carbon Armor (B.S.)","Power Brace (B.S.)","Helical Tie-Back","Core-fill","Excavation","Lateral Restraint"]
+  },
+  { id:"PSFF", name:"Permanently Stabilize Floor Framing System (PSFF)", area:"Crawlspace/Basement",
+    summary:"Address sagging/bouncy floors with supports, beams, joists, and load-path corrections.",
+    how:["Identify sag points and load path","Add supports on proper footings","Reinforce beams/joists as needed","If lifting, follow spacing/jack-count guidance and verify framing condition"],
+    notfor:["Perimeter settlement is primary issue (use piers)","Rot/termite damage without repair scope","No adequate footing possible without plan/engineering"],
+    keywords:["bouncy floor","bounce","sagging","sloped floor","shaky floor","doors sticking","sheetrock cracks","drywall cracks","uneven floors"],
+    systems:["SettleStop Intellijack","SettleStop Floor Support System","Supplemental Beam (3)2x8","S-4 Beam","C-Channel","Sister Joist","Perimeter Beam Replacement","Main Beam Replacement","Subfloor Replacement","Smart Jack (B.S.)","Titan Support"],
+    internal_rules: PSFF_INTERNAL_RULES
+  },
+  { id:"PSPF", name:"Permanently Stabilize Perimeter Foundation (PSPF)", area:"Any",
+    summary:"Stabilize settlement/rotation with piers transferring load to stable soil.",
+    how:["Select pier type based on soil + structure + access","Install to bearing/torque/refusal","Lift/lock if appropriate; monitor"],
+    notfor:["Primary symptom is wall bowing/horizontal cracking (use wall stabilization)","Trip hazard only (poly lift often first line)","Access constraints unplanned"],
+    keywords:["cracks in brick","brick crack","block crack","window gap","door gap","separation","frieze board","settlement","sinking corner","stair-step crack"],
+    systems:["SettleStop Helical Pier","SettleStop Push Pier","Helical Pier","Push Pier","Helical Pier Extension","Push Pier Extension"]
+  },
+  { id:"SYC", name:"Stabilize Your Concrete (SYC)", area:"Any",
+    summary:"Lift/level slabs, fill voids, and reduce water-driven erosion with source control.",
+    how:["Identify settlement + voids","Inject poly to lift/stabilize (or structural supports if needed)","Seal cracks/joints","Control water sources (downspouts/discharge/grading)"],
+    notfor:["Severely broken slabs needing replacement","Underlying washout not addressed (will re-settle)","Active plumbing leaks under slab"],
+    keywords:["uneven driveway","uneven walkway","trip hazard","toe kick","sunken slab","settled concrete","void","concrete lifting","pooling on driveway","uneven concrete"],
+    systems:["SettleStop PolyRenewal","SettleStop 2-part","Crack Sealing","Poly-Level (B.S.)","Extend Downspouts","Slab Pier"]
+  }
+];
 
-function rotateHero(){
-  heroBg.style.backgroundImage = `url('${heroImages[heroIndex]}')`;
-  heroIndex = (heroIndex + 1) % heroImages.length;
+var SYSTEMS = [
+  sys("Aquastop Perimeter Drain (Full/Partial)","Basement","CGWS","Interior perimeter drainage at footing capturing seepage to sump.",
+    ["Basement Gutter","Sump systems","Discharge management"],
+    ["Not exterior waterproofing.","Needs correct discharge plan; avoid recycling water."]),
+  sys("Aquastop Basement Gutter (Full/Partial)","Basement","CGWS","Wall-to-floor channel capturing wall seepage to drain/sump.",
+    ["Perimeter drain","Wall liners","Sump systems"],
+    ["Manages water after entry; does not stop exterior source."]),
+  sys("Aquastop Grate","Basement","CGWS","Surface inlet for fast water entry to drainage at hotspots.",
+    ["Perimeter drain","Basement gutter"],["Spot capture only; not a full system."]),
+  sys("Aquastop CrawlDrain","Crawlspace","CGWS","Crawlspace drainage line routing water to sump/discharge.",
+    ["Sump systems","Discharge management"],["Pitch/access constraints matter."]),
+  sys("Aquastop Triple Pumping System","Any","CGWS","Redundant sump pumping for high risk/volume scenarios.",
+    ["Battery backup","FreezeGuard","Discharge line"],["Runtime/maintenance required."]),
+  sys("Aquastop Single Pumping Systems","Any","CGWS","Single primary sump pump configuration.",
+    ["Battery backup (as needed)","Discharge line"],["Single point of failure without backup."]),
+  sys("Safe-dri Battery Back-up","Any","CGWS","Backup power to keep pump running during outage.",
+    ["Sump systems"],["Finite runtime; needs testing."]),
+  sys("FreezeGuard","Any","CGWS","Allows water escape if discharge freezes/blocks.",
+    ["Any sump discharge"],["Freeze protection only; routing still matters."]),
+  sys("Extend Discharge Line","Any","CGWS","Moves discharge farther from foundation to reduce recirculation.",
+    ["Downspout extensions","Yardwell"],["Trip/codes/grade constraints."]),
+  sys("Downspout Extensions","Any","CGWS","Routes roof runoff away from foundation.",
+    ["Grading","Yardwell"],["Only handles roof water."]),
+  sys("Flat yardwell","Any","CGWS","Discharge receptacle to dissipate water when needed.",
+    ["Discharge line"],["Can overflow; avoid sending water back toward foundation."]),
+
+  sys("Aquastop Wall Seal","Basement","CWM","Interior sealing approach to reduce wall dampness/vapor intrusion.",
+    ["Wall liner systems","Dehumidification"],["Not structural; bulk water may still require drainage."]),
+  sys("Bright Wall (B.S.)","Basement","CWM","Wall panel system that improves appearance and manages moisture behind.",
+    ["Drainage at base","Sump systems"],["Not structural; relies on drainage path."]),
+  sys("Cleanspace Wall (B.S.)","Basement","CWM","Wall vapor barrier membrane isolating interior air from masonry.",
+    ["Drainage","Dehumidifiers"],["Not for unmanaged bulk water."]),
+  sys("Zen Wall (B.S.)","Basement","CWM","Finished wall panel system for clean interior surface.",
+    ["Drainage","Dehumidification"],["Not structural; requires proper drainage termination."]),
+  sys("Wall Panel","Basement","CWM","Generic panel component used in wall systems.",
+    ["Wall liners","Drainage"],["Material selection affects durability/mold resistance."]),
+
+  sys("Aquastop Basement Air System","Basement","CTE","Dehumidification/air management system to control RH and odors.",
+    ["Wall liners","Drainage systems"],["Not substitute for bulk water control."]),
+  sys("Aquastop Crawlspace Air System","Crawlspace","CTE","Crawlspace dehumidification/air management system.",
+    ["Encapsulation","Condensation pump"],["Bulk water must be controlled first."]),
+  sys("Sani-Dry Upright (B.S. Air System)","Basement","CTE","Brand-specific upright dehumidifier/air system.",
+    ["Condensation pump"],["Needs drain plan and service access."]),
+  sys("Sani-Dry Sedona (B.S.)","Any","CTE","Compact high-efficiency dehumidifier platform (model dependent).",
+    ["Condensation pump","Duct kit"],["Sizing/service access matter."]),
+  sys("Sante Fe Elite","Any","CTE","Higher capacity dehumidifier platform.",
+    ["Condensation pump","Duct kit"],["Ducting/layout affects performance."]),
+  sys("Sante Fe Edge","Any","CTE","Dehumidifier platform used in crawl/basement contexts.",
+    ["Condensation pump"],["Needs drainage + filter service."]),
+  sys("Condensation Pump","Any","CTE","Pumps condensate when gravity drain isn’t possible.",
+    ["Any dehumidifier"],["Adds failure point; needs cleaning/power."]),
+  sys("Duct Kit","Any","CTE","Ducting components to distribute dry air/manage returns.",
+    ["Dehumidifiers"],["Bad duct layout reduces performance."]),
+  sys("Remote Hygrometer","Crawlspace","CTE","Remote humidity monitoring sensor.",
+    ["Crawlspace air system"],["Placement matters; monitoring only."]),
+  sys("Aquastop CrawlSeal","Crawlspace","CTE","Encapsulation barrier isolating crawl from ground moisture/outdoor air.",
+    ["Crawlspace air system","Door system"],["Bulk water must be handled first."]),
+  sys("Aquastop Crawlspace Door","Crawlspace","CTE","Sealed/insulated access door to reduce air leakage.",
+    ["Encapsulation"],["Seal quality determines results."]),
+
+  sys("SettleStop Carbon Fiber","Basement","PSYW","Carbon reinforcement strips bonded to wall to resist bowing.",
+    ["Crack sealing (as designed)"],["Not for severe displacement without engineering."]),
+  sys("SettleStop IntelliBrace","Basement","PSYW","Interior steel bracing to stabilize bowed walls.",
+    ["Core-fill (block walls)"],["Stabilizes; straightening depends on pressure reduction/design."]),
+  sys("SettleStop Earth Anchor","Basement","PSYW","Anchor system tied into stable soil to restrain/pull wall.",
+    ["Excavation"],["Requires exterior access; utilities/soil limit placement."]),
+  sys("SettleStop Helical Anchor","Basement","PSYW","Helical tie-back anchor screwed into stable soil.",
+    ["Excavation"],["Soil variability affects capacity; clearance needed."]),
+  sys("Geo-Lock Anchor (B.S. Anchor)","Basement","PSYW","Brand-specific earth anchor wall stabilization system.",
+    ["Excavation"],["Exterior access required."]),
+  sys("Carbon Armor (B.S.)","Basement","PSYW","Brand-specific carbon reinforcement system.",
+    ["Crack sealing"],["Surface prep critical; limits apply."]),
+  sys("Power Brace (B.S.)","Basement","PSYW","Brand-specific interior steel bracing system.",
+    ["Core-fill"],["Interior layout constraints."]),
+  sys("Helical Tie-Back","Basement","PSYW","Tie-back anchoring using helical plates for restraint/correction.",
+    ["Excavation"],["Requires clearance and stable soil."]),
+  sys("Core-fill","Basement","PSYW","Fill hollow block cores to improve wall strength and brace performance.",
+    ["Bracing systems"],["Requires correct method/access."]),
+  sys("Excavation","Basement","PSYW","Dig access for exterior anchors/tie-backs.",
+    ["Anchors/tie-backs"],["Space/landscaping/utilities/permitting can constrain."]),
+  sys("Lateral Restraint","Basement","PSYW","Category: resisting lateral soil forces on walls.",
+    ["Anchors","Bracing"],["Pair with water management to reduce pressure."]),
+
+  // PSFF (includes your new rules)
+  sys("SettleStop Intellijack","Crawlspace/Basement","PSFF","Adjustable steel support post for beams/joists; may be used for minimal lift where allowed.",
+    ["Supplemental beams","Sister joists","Proper footings/pads"],
+    [
+      "Footing/load path must be correct; do not lift on compromised framing.",
+      "If lifting: every ~5' spacing; 8' max spacing (minimal lift).",
+      "8'–10': 2 jacks (no lift at 10'; stabilization/support only).",
+      "12': 3 jacks.",
+      "Always assess joist/beam condition before lift."
+    ]),
+  sys("SettleStop Floor Support System","Crawlspace/Basement","PSFF","System of posts/supports + beam work for load transfer.",
+    ["IntelliJacks","Beams","Joist reinforcement"],
+    ["Footing requirements + access drive feasibility."]),
+  sys("Supplemental Beam (3)2x8","Crawlspace/Basement","PSFF","Added beam to stiffen framing and redistribute loads.",
+    ["Support posts/jacks"],["Sizing/span must be correct; may reduce headroom."]),
+  sys("S-4 Beam","Crawlspace/Basement","PSFF","Beam type used for reinforcement (job-specific).",
+    ["Support posts/jacks","Blocking (as needed)"],
+    [
+      "Always check if blocking is needed when utilizing S-4 beams.",
+      "Always check condition of joists/beams before installing or lifting."
+    ]),
+  sys("C-Channel","Crawlspace/Basement","PSFF","Steel channel to stiffen/bridge framing elements.",
+    ["Sister joists"],["Fastening/corrosion environment matter."]),
+  sys("Sister Joist","Crawlspace/Basement","PSFF","New joist alongside existing to strengthen/stiffen.",
+    ["Subfloor replacement"],["Access required; doesn’t fix bearing issues alone."]),
+  sys("Perimeter Beam Replacement","Crawlspace/Basement","PSFF","Replace compromised perimeter beam.",
+    ["Support posts/jacks"],["Often signals moisture/rot—address source."]),
+  sys("Main Beam Replacement","Crawlspace/Basement","PSFF","Replace main girder beam.",
+    ["Support posts/jacks"],["Major structural scope; temp support plan needed."]),
+  sys("Subfloor Replacement","Crawlspace/Basement","PSFF","Replace damaged subfloor sheathing.",
+    ["Joist repair"],["Doesn’t fix moisture source alone."]),
+  sys("Smart Jack (B.S.)","Crawlspace/Basement","PSFF","Brand-specific adjustable support jack/post.",
+    ["Beams/joists"],["Footing/load path must be correct."]),
+  sys("Titan Support","Crawlspace/Basement","PSFF","Support post system (job-specific).",
+    ["Beams/joists"],["Confirm model/spec with Production."]),
+
+  sys("SettleStop Helical Pier","Any","PSPF","Helical screw pier installed to torque/bearing; stabilize and potentially lift.",
+    ["Helical Pier Extension"],["Soil conditions/access affect performance."]),
+  sys("SettleStop Push Pier","Any","PSPF","Driven pier using structure as reaction to reach stable strata.",
+    ["Push Pier Extension"],["Needs sufficient structural reaction; access constraints."]),
+  sys("Helical Pier","Any","PSPF","Generic helical pier category.",
+    ["Helical Pier Extension"],["Soil torque/capacity governs performance."]),
+  sys("Push Pier","Any","PSPF","Generic push pier category.",
+    ["Push Pier Extension"],["Reaction + access constraints apply."]),
+  sys("Helical Pier Extension","Any","PSPF","Additional segments to reach bearing depth.",
+    ["Helical piers"],["Obstructions can limit depth; adds cost/time."]),
+  sys("Push Pier Extension","Any","PSPF","Additional driven segments to reach stable strata.",
+    ["Push piers"],["Obstructions can limit depth; adds cost/time."]),
+
+  sys("SettleStop PolyRenewal","Any","SYC","Poly injection lifting/leveling concrete and filling voids.",
+    ["Crack sealing","Downspout/discharge control"],["Not for severely broken slabs; base stability matters."]),
+  sys("SettleStop 2-part","Any","SYC","Two-part poly used for lifting/void fill (job-specific).",
+    ["PolyRenewal"],["Confirm spec with Production."]),
+  sys("Crack Sealing","Any","SYC","Seal cracks/joints to limit water entry and reduce spalling.",
+    ["Poly leveling"],["Sealants have lifespan; movement can reopen."]),
+  sys("Poly-Level (B.S.)","Any","SYC","Brand-specific poly lift/level system.",
+    ["Crack sealing"],["Water source control is key."]),
+  sys("Extend Downspouts","Any","SYC","Downspout extension called out with slab work to reduce washout.",
+    ["Concrete lifting"],["Roof runoff is only one source; grade may still be needed."]),
+  sys("Slab Pier","Any","SYC","Structural slab support option in certain cases (more invasive).",
+    ["Poly lifting (sometimes)"],["Confirm applicability with Production/engineering."])
+];
+
+function sys(name, area, group, what, works_with, limits){
+  return {name:name, area:area, group:group, what:what, works_with:works_with, limits:limits};
 }
 
-rotateHero();
-setInterval(rotateHero, 5000);
+/* =========================
+   UTIL
+   ========================= */
+function normalizeText(s){
+  return (s||"").toLowerCase()
+    .replace(/[^a-z0-9\s]/g," ")
+    .replace(/\s+/g," ")
+    .trim();
+}
+function escapeHtml(s){
+  return String(s||"").replace(/[&<>"']/g,function(m){
+    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m];
+  });
+}
+function filterByArea(itemArea, filterArea){
+  if (filterArea==="Any") return true;
+  if (itemArea==="Any") return true;
+  return String(itemArea).indexOf(filterArea) >= 0;
+}
+function findSystem(name){
+  for (var i=0;i<SYSTEMS.length;i++) if (SYSTEMS[i].name===name) return SYSTEMS[i];
+  return null;
+}
 
+/* =========================
+   DECISION ENGINE
+   ========================= */
+var LAST_ANALYSIS = null;
 
-/* DECISION LOGIC */
+function scoreProject(p, textNorm){
+  var score=0, hits=[];
+  for (var i=0;i<p.keywords.length;i++){
+    var kwRaw=p.keywords[i];
+    var kw=normalizeText(kwRaw);
+    if (!kw) continue;
 
-function analyze() {
-  const input = document.getElementById("conditionInput").value.toLowerCase();
-  const results = document.getElementById("results");
+    var found = (kw.indexOf(" ")>=0)
+      ? (textNorm.indexOf(kw)>=0)
+      : ((" "+textNorm+" ").indexOf(" "+kw+" ")>=0);
 
-  if (!input.trim()) {
-    results.innerHTML = "Please enter observed conditions.";
+    if (found){
+      score += (kw.indexOf(" ")>=0) ? 4 : 2;
+      hits.push(kwRaw);
+    }
+  }
+
+  // boosters
+  if (p.id==="PSYW" && (textNorm.indexOf("horizontal")>=0 || textNorm.indexOf("bow")>=0)) score+=3;
+  if (p.id==="PSFF" && (textNorm.indexOf("floor")>=0 || textNorm.indexOf("door")>=0)) score+=2;
+  if (p.id==="SYC" && (textNorm.indexOf("concrete")>=0 || textNorm.indexOf("driveway")>=0 || textNorm.indexOf("walk")>=0)) score+=2;
+  if (p.id==="CGWS" && (textNorm.indexOf("sump")>=0 || textNorm.indexOf("pump")>=0 || textNorm.indexOf("flood")>=0)) score+=2;
+  if (p.id==="CTE" && (textNorm.indexOf("musty")>=0 || textNorm.indexOf("humidity")>=0 || textNorm.indexOf("mold")>=0)) score+=2;
+
+  return {score:score, hits:hits};
+}
+
+function analyze(){
+  var raw=document.getElementById("conditionInput").value||"";
+  var area=document.getElementById("areaSelect").value||"Any";
+  var norm=normalizeText(raw);
+
+  var customerMode=document.getElementById("customerMode").checked;
+  document.getElementById("modeLabel").textContent = customerMode ? "Customer" : "Internal";
+
+  var scored=[];
+  for (var i=0;i<PROJECTS.length;i++){
+    var p=PROJECTS[i];
+    if (!filterByArea(p.area, area)) continue;
+    var s=scoreProject(p, norm);
+    if (s.score>0) scored.push({project:p, score:s.score, hits:s.hits});
+  }
+  scored.sort(function(a,b){return b.score-a.score});
+
+  LAST_ANALYSIS = scored.length ? scored[0] : null;
+
+  renderResults(scored, raw, area, customerMode);
+  renderQuickSystems(scored, customerMode);
+  clearCustomerSummary();
+}
+
+function renderResults(scored, rawText, area, customerMode){
+  var out=document.getElementById("results");
+
+  if (!rawText.trim()){
+    out.innerHTML='<div class="muted">Type observed conditions above, then press <span class="kbd">Analyze</span>.</div>';
+    setKPIs("—",0,0);
     return;
   }
 
-  let output = "<h3>Recommended Project:</h3>";
-
-  if (input.includes("efflorescence") || input.includes("water") || input.includes("damp")) {
-    output += "<b>Control Groundwater Seepage</b><br><br>";
-    output += "<b>When NOT to use:</b><ul>";
-    output += "<li>Structural wall bowing without stabilization</li>";
-    output += "<li>No discharge route available</li>";
-    output += "</ul>";
-  }
-  else if (input.includes("bow") || input.includes("horizontal crack")) {
-    output += "<b>Permanently Stabilize Your Walls</b><br><br>";
-    output += "<b>When NOT to use:</b><ul>";
-    output += "<li>Settlement symptoms without lateral pressure</li>";
-    output += "<li>Severe structural failure requiring rebuild</li>";
-    output += "</ul>";
-  }
-  else if (input.includes("sloping") || input.includes("bouncy") || input.includes("doors sticking")) {
-    output += "<b>Permanently Stabilize Floor Framing System</b><br><br>";
-    output += "<b>When NOT to use:</b><ul>";
-    output += "<li>Perimeter foundation settlement (use piers)</li>";
-    output += "<li>Rot damage without repair scope</li>";
-    output += "</ul>";
-  }
-  else if (input.includes("uneven") || input.includes("driveway") || input.includes("trip hazard")) {
-    output += "<b>Stabilize Your Concrete</b><br><br>";
-    output += "<b>When NOT to use:</b><ul>";
-    output += "<li>Severely broken slab needing replacement</li>";
-    output += "<li>Active plumbing leak under slab</li>";
-    output += "</ul>";
-  }
-  else {
-    output += "No strong match found. Add more detail.";
+  if (!scored.length){
+    out.innerHTML='<div class="noteBox"><b>No strong match found.</b><div class="muted small">Add more detail (odor, humidity, crack direction, floor behavior, water presence).</div></div>';
+    setKPIs("0",0,0);
+    return;
   }
 
-  results.innerHTML = output;
+  var topN=scored.slice(0, Math.min(3, scored.length));
+  var topScore=String(topN[0].score);
+
+  // count systems across topN
+  var sysSet={}, count=0;
+  for (var i=0;i<topN.length;i++){
+    var sysList=topN[i].project.systems;
+    for (var j=0;j<sysList.length;j++) sysSet[sysList[j]]=true;
+  }
+  for (var k in sysSet) if (sysSet.hasOwnProperty(k)) count++;
+
+  setKPIs(topScore, scored.length, count);
+
+  var html='';
+  html+='<div class="muted small">Area filter: <b>'+escapeHtml(area)+'</b></div>';
+
+  for (var i=0;i<topN.length;i++){
+    var e=topN[i], p=e.project;
+
+    html+='<details open>';
+    html+='<summary>'+escapeHtml(p.name)+' <span class="tag">score '+e.score+'</span></summary>';
+    html+='<div class="small muted" style="margin-top:8px">'+escapeHtml(p.summary)+'</div>';
+
+    if (e.hits.length){
+      html+='<div class="small" style="margin-top:8px"><span class="pill">Matched</span> ';
+      html+='<span class="muted">'+escapeHtml(e.hits.slice(0,10).join(", "))+(e.hits.length>10?"…":"")+'</span></div>';
+    }
+
+    html+='<div class="two" style="margin-top:10px">';
+    html+='<div><b>How it works together</b><ul>';
+    for (var a=0;a<p.how.length;a++) html+='<li>'+escapeHtml(p.how[a])+'</li>';
+    html+='</ul></div>';
+
+    html+='<div class="danger"><b>When NOT to use</b><ul>';
+    for (var b=0;b<p.notfor.length;b++) html+='<li>'+escapeHtml(p.notfor[b])+'</li>';
+    html+='</ul></div>';
+    html+='</div>';
+
+    if (!customerMode && p.internal_rules && p.internal_rules.length){
+      html+='<div class="hr"></div>';
+      html+='<div class="noteBox"><b>Internal install rules</b><ul class="small">';
+      for (var r=0;r<p.internal_rules.length;r++) html+='<li>'+escapeHtml(p.internal_rules[r])+'</li>';
+      html+='</ul></div>';
+    }
+
+    html+='<div class="hr"></div>';
+    html+='<b>Systems involved</b> <span class="muted">(organized view: “Systems by Project” tab)</span>';
+    html+='<ul>';
+    for (var s=0;s<p.systems.length;s++) html+='<li>'+escapeHtml(p.systems[s])+'</li>';
+    html+='</ul>';
+
+    html+='</details>';
+  }
+
+  out.innerHTML=html;
 }
 
+function setKPIs(topScore, projects, systems){
+  document.getElementById("topScore").textContent=String(topScore);
+  document.getElementById("projectCount").textContent=String(projects);
+  document.getElementById("systemCount").textContent=String(systems);
+}
+
+/* =========================
+   CUSTOMER SUMMARY
+   ========================= */
+function clearCustomerSummary(){
+  document.getElementById("customerSummaryArea").innerHTML="";
+}
+
+function generateCustomerSummary(){
+  var notes = document.getElementById("conditionInput").value || "";
+  var area = document.getElementById("areaSelect").value || "Any";
+
+  if (!notes.trim()){
+    document.getElementById("customerSummaryArea").innerHTML =
+      '<div class="summaryBox"><b>Customer Summary:</b> Enter observed conditions first.</div>';
+    return;
+  }
+
+  if (!LAST_ANALYSIS){
+    document.getElementById("customerSummaryArea").innerHTML =
+      '<div class="summaryBox"><b>Customer Summary:</b> No recommendation yet. Click <b>Analyze</b>.</div>';
+    return;
+  }
+
+  var p = LAST_ANALYSIS.project;
+
+  var customerExplain = {
+    "CGWS":"We control water entering the space by capturing it and safely pumping it away from the home.",
+    "CWM":"We manage moisture coming through basement walls by isolating the space and directing moisture to the drainage path.",
+    "CTE":"We control humidity and air quality to reduce musty odors and moisture damage risk.",
+    "PSYW":"We stabilize basement walls to stop movement caused by pressure outside the wall.",
+    "PSFF":"We stabilize the floor framing to reduce sag/bounce and improve floor performance.",
+    "PSPF":"We stabilize the foundation using piers that support the home on stable soil.",
+    "SYC":"We stabilize and lift uneven concrete and fill voids to reduce trip hazards and future settling."
+  };
+
+  var html='';
+  html+='<div class="summaryBox">';
+  html+='<div class="summaryHeader">';
+  html+='<h3 style="margin:0;color:'+escapeHtml(getComputedStyle(document.documentElement).getPropertyValue("--navy2"))+'">Customer Summary</h3>';
+  html+='<span class="badge">Primary Recommendation</span>';
+  html+='</div>';
+
+  html+='<div class="hr"></div>';
+  html+='<div><b>Area:</b> '+escapeHtml(area)+'</div>';
+  html+='<div style="margin-top:8px"><b>What we observed:</b><div class="muted small">'+escapeHtml(notes)+'</div></div>';
+
+  html+='<div class="hr"></div>';
+  html+='<div><b>Recommended solution:</b> '+escapeHtml(p.name)+'</div>';
+  html+='<div class="muted small" style="margin-top:6px">'+escapeHtml(customerExplain[p.id] || p.summary)+'</div>';
+
+  html+='<div class="hr"></div>';
+  html+='<div><b>What this typically includes:</b><ul class="small">';
+  for (var i=0;i<Math.min(4,p.how.length);i++) html+='<li>'+escapeHtml(p.how[i])+'</li>';
+  html+='</ul></div>';
+
+  html+='<div class="danger" style="margin-top:10px"><b>Important limits / not the right tool when:</b><ul class="small">';
+  for (var j=0;j<Math.min(3,p.notfor.length);j++) html+='<li>'+escapeHtml(p.notfor[j])+'</li>';
+  html+='</ul></div>';
+
+  html+='<div class="hr"></div>';
+  html+='<div class="muted small">Prepared by Matthew Urbanski • AquaGuard Foundation Solutions</div>';
+  html+='</div>';
+
+  document.getElementById("customerSummaryArea").innerHTML=html;
+  // auto-scroll summary into view
+  document.getElementById("customerSummaryArea").scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+/* =========================
+   QUICK SYSTEMS
+   ========================= */
+function renderQuickSystems(scored, customerMode){
+  var out=document.getElementById("quickSystems");
+  if (!scored.length){
+    out.innerHTML='<div class="muted">Run an analysis to populate relevant systems here.</div>';
+    return;
+  }
+
+  var topN=scored.slice(0, Math.min(2, scored.length));
+  var set={}, list=[];
+  for (var i=0;i<topN.length;i++){
+    var sysList=topN[i].project.systems;
+    for (var j=0;j<sysList.length;j++){
+      var name=sysList[j];
+      if (!set[name]){ set[name]=true; list.push(name); }
+    }
+  }
+
+  var html='';
+  for (var k=0;k<list.length;k++){
+    var sObj=findSystem(list[k]);
+    html += sObj ? systemCard(sObj, customerMode) : '<details><summary>'+escapeHtml(list[k])+'</summary><div class="muted small">No library entry yet.</div></details>';
+  }
+  out.innerHTML=html;
+}
+
+function systemCard(s, customerMode){
+  var html='';
+  html+='<details>';
+  html+='<summary>'+escapeHtml(s.name)+' <span class="tag">'+escapeHtml(s.area)+' • '+escapeHtml(s.group)+'</span></summary>';
+  html+='<div class="small" style="margin-top:8px">';
+  html+='<div><b>What:</b> '+escapeHtml(s.what)+'</div>';
+
+  if (s.works_with && s.works_with.length){
+    html+='<div style="margin-top:8px"><b>Works with:</b><ul>';
+    for (var i=0;i<s.works_with.length;i++) html+='<li>'+escapeHtml(s.works_with[i])+'</li>';
+    html+='</ul></div>';
+  }
+
+  if (s.limits && s.limits.length){
+    html+='<div style="margin-top:8px" class="danger"><b>Limitations / don’t use for:</b><ul>';
+    for (var j=0;j<s.limits.length;j++){
+      var line=s.limits[j];
+      // customerMode: hide ultra-internal lift spacing lines (still show safety-style limits)
+      var internalLike = (line.indexOf("If lifting:")===0) || (line.indexOf("8'–10':")===0) || (line.indexOf("12':")===0);
+      if (customerMode && internalLike) continue;
+      html+='<li>'+escapeHtml(line)+'</li>';
+    }
+    html+='</ul></div>';
+  }
+
+  html+='</div></details>';
+  return html;
+}
+
+/* =========================
+   SYSTEMS BY PROJECT TAB
+   ========================= */
+function renderByProject(){
+  var sel=document.getElementById("projSelect");
+  sel.innerHTML="";
+  for (var i=0;i<PROJECTS.length;i++){
+    var opt=document.createElement("option");
+    opt.value=PROJECTS[i].id;
+    opt.textContent=PROJECTS[i].name;
+    sel.appendChild(opt);
+  }
+  sel.addEventListener("change", function(){ renderProjectView(sel.value); });
+  renderProjectView(sel.value);
+}
+
+function renderProjectView(projectId){
+  var customerMode=document.getElementById("customerMode").checked;
+  var p=null;
+  for (var i=0;i<PROJECTS.length;i++) if (PROJECTS[i].id===projectId) p=PROJECTS[i];
+  if (!p) return;
+
+  var el=document.getElementById("projView");
+  var html='';
+
+  html+='<details open>';
+  html+='<summary>'+escapeHtml(p.name)+'</summary>';
+  html+='<div class="small muted" style="margin-top:8px">'+escapeHtml(p.summary)+'</div>';
+
+  html+='<div class="two" style="margin-top:10px">';
+  html+='<div><b>How it works together</b><ul>';
+  for (var a=0;a<p.how.length;a++) html+='<li>'+escapeHtml(p.how[a])+'</li>';
+  html+='</ul></div>';
+
+  html+='<div class="danger"><b>When NOT to use</b><ul>';
+  for (var b=0;b<p.notfor.length;b++) html+='<li>'+escapeHtml(p.notfor[b])+'</li>';
+  html+='</ul></div>';
+  html+='</div>';
+
+  if (!customerMode && p.internal_rules && p.internal_rules.length){
+    html+='<div class="hr"></div>';
+    html+='<div class="noteBox"><b>Internal install rules</b><ul class="small">';
+    for (var r=0;r<p.internal_rules.length;r++) html+='<li>'+escapeHtml(p.internal_rules[r])+'</li>';
+    html+='</ul></div>';
+  }
+
+  html+='<div class="hr"></div>';
+  html+='<b>Systems</b>';
+  for (var s=0;s<p.systems.length;s++){
+    var sObj=findSystem(p.systems[s]);
+    html += sObj ? systemCard(sObj, customerMode) : '<details><summary>'+escapeHtml(p.systems[s])+'</summary><div class="muted small">No library entry yet.</div></details>';
+  }
+
+  html+='</details>';
+  el.innerHTML=html;
+}
+
+/* =========================
+   FULL LIBRARY TAB
+   ========================= */
+function renderLibrary(){
+  var q=normalizeText(document.getElementById("librarySearch").value||"");
+  var area=document.getElementById("libraryArea").value||"Any";
+  var customerMode=document.getElementById("customerMode").checked;
+
+  var groups={};
+  for (var i=0;i<SYSTEMS.length;i++){
+    var s=SYSTEMS[i];
+    if (!filterByArea(s.area, area)) continue;
+
+    if (q){
+      var blob=normalizeText([s.name,s.area,s.group,s.what,(s.works_with||[]).join(" "),(s.limits||[]).join(" ")].join(" "));
+      if (blob.indexOf(q)<0) continue;
+    }
+
+    var key=s.group;
+    if (!groups[key]) groups[key]=[];
+    groups[key].push(s);
+  }
+
+  var keys=[];
+  for (var k in groups) if (groups.hasOwnProperty(k)) keys.push(k);
+  keys.sort();
+
+  var out=document.getElementById("library");
+  if (!keys.length){
+    out.innerHTML='<div class="muted">No matches.</div>';
+    return;
+  }
+
+  var html='';
+  for (var gi=0;gi<keys.length;gi++){
+    var key=keys[gi];
+    var arr=groups[key];
+    arr.sort(function(a,b){return a.name.localeCompare(b.name);});
+
+    html+='<details>';
+    html+='<summary>'+escapeHtml(key)+' <span class="tag">'+arr.length+' items</span></summary>';
+    for (var si=0;si<arr.length;si++){
+      html+=systemCard(arr[si], customerMode);
+    }
+    html+='</details>';
+  }
+  out.innerHTML=html;
+}
+
+/* =========================
+   WIRING
+   ========================= */
+document.getElementById("btnAnalyze").addEventListener("click", analyze);
+document.getElementById("btnCustomer").addEventListener("click", generateCustomerSummary);
+document.getElementById("btnPrint").addEventListener("click", function(){ window.print(); });
+
+document.getElementById("btnReset").addEventListener("click", function(){
+  document.getElementById("conditionInput").value="";
+  document.getElementById("areaSelect").value="Any";
+  document.getElementById("quickSearch").value="";
+  document.getElementById("customerMode").checked=false;
+  document.getElementById("modeLabel").textContent="Internal";
+  setKPIs("—",0,0);
+  document.getElementById("results").innerHTML='<div class="muted">Type observed conditions above, then press <span class="kbd">Analyze</span>.</div>';
+  document.getElementById("quickSystems").innerHTML='<div class="muted">Run an analysis to populate relevant systems here.</div>';
+  clearCustomerSummary();
+  LAST_ANALYSIS=null;
+  renderProjectView(document.getElementById("projSelect").value);
+  renderLibrary();
+});
+
+document.getElementById("quickSearch").addEventListener("input", function(e){
+  document.getElementById("librarySearch").value = e.target.value || "";
+  renderLibrary();
+});
+
+document.getElementById("librarySearch").addEventListener("input", renderLibrary);
+document.getElementById("libraryArea").addEventListener("change", renderLibrary);
+
+document.getElementById("customerMode").addEventListener("change", function(){
+  // refresh all views to hide/show internal notes
+  analyze();
+  renderProjectView(document.getElementById("projSelect").value);
+  renderLibrary();
+});
+
+/* =========================
+   INIT
+   ========================= */
+document.getElementById("results").innerHTML='<div class="muted">Type observed conditions above, then press <span class="kbd">Analyze</span>.</div>';
+document.getElementById("quickSystems").innerHTML='<div class="muted">Run an analysis to populate relevant systems here.</div>';
+setKPIs("—",0,0);
+renderByProject();
+renderLibrary();
 </script>
 
 </body>

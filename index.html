@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AquaGuard Field Tool</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  background: #f4f7fb;
+  color: #0c1220;
+}
+
+.hero {
+  position: relative;
+  padding: 30px;
+  color: white;
+  background: linear-gradient(135deg,#173a5a,#0f2b44);
+  overflow: hidden;
+}
+
+.hero::after{
+  content:"";
+  position:absolute;
+  top:-100px;
+  right:-100px;
+  width:300px;
+  height:300px;
+  background:linear-gradient(135deg,#d94aa6,#ff5bbb);
+  transform:rotate(25deg);
+  border-radius:40px;
+  opacity:.4;
+}
+
+.hero-content{
+  position:relative;
+  z-index:2;
+}
+
+.logo{
+  width:70px;
+  margin-bottom:10px;
+}
+
+.hero-image{
+  position:absolute;
+  inset:0;
+  background-size:cover;
+  background-position:center;
+  opacity:.25;
+  z-index:1;
+}
+
+button{
+  padding:10px 14px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.primary{
+  background:#d94aa6;
+  color:#fff;
+}
+
+.container{
+  padding:20px;
+  max-width:1000px;
+  margin:auto;
+}
+
+textarea{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #ccc;
+  min-height:120px;
+}
+
+.results{
+  margin-top:20px;
+  padding:20px;
+  background:white;
+  border-radius:12px;
+  border:1px solid #ddd;
+}
+
+footer{
+  text-align:center;
+  padding:20px;
+  font-size:13px;
+  color:#666;
+}
+</style>
+</head>
+
+<body>
+
+<div class="hero">
+  <div class="hero-image" id="heroBg"></div>
+
+  <div class="hero-content">
+    <img src="./assets/logo.png" class="logo" alt="Logo">
+
+    <h1>AquaGuard Field Cheat Sheet Tool</h1>
+    <p>Condition → Project Decision Logic</p>
+
+    <button class="primary" onclick="analyze()">Analyze Condition</button>
+    <button onclick="window.print()">Print / Save PDF</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <h2>Observed Condition</h2>
+  <textarea id="conditionInput" placeholder="Example: efflorescence, damp walls, water stains"></textarea>
+
+  <div class="results" id="results">
+    Type conditions above and press Analyze.
+  </div>
+
+</div>
+
+<footer>
+  Tool created by <strong>Matthew Urbanski</strong> • Certified Field Inspector
+</footer>
+
+<script>
+
+/* HERO IMAGE ROTATOR (.JPG uppercase enforced) */
+const heroImages = [
+  "./assets/hero-foundation.JPG",
+  "./assets/hero-crawlspace.JPG",
+  "./assets/hero-basement.JPG"
+];
+
+let heroIndex = 0;
+const heroBg = document.getElementById("heroBg");
+
+function rotateHero(){
+  heroBg.style.backgroundImage = `url('${heroImages[heroIndex]}')`;
+  heroIndex = (heroIndex + 1) % heroImages.length;
+}
+
+rotateHero();
+setInterval(rotateHero, 5000);
+
+
+/* DECISION LOGIC */
+
+function analyze() {
+  const input = document.getElementById("conditionInput").value.toLowerCase();
+  const results = document.getElementById("results");
+
+  if (!input.trim()) {
+    results.innerHTML = "Please enter observed conditions.";
+    return;
+  }
+
+  let output = "<h3>Recommended Project:</h3>";
+
+  if (input.includes("efflorescence") || input.includes("water") || input.includes("damp")) {
+    output += "<b>Control Groundwater Seepage</b><br><br>";
+    output += "<b>When NOT to use:</b><ul>";
+    output += "<li>Structural wall bowing without stabilization</li>";
+    output += "<li>No discharge route available</li>";
+    output += "</ul>";
+  }
+  else if (input.includes("bow") || input.includes("horizontal crack")) {
+    output += "<b>Permanently Stabilize Your Walls</b><br><br>";
+    output += "<b>When NOT to use:</b><ul>";
+    output += "<li>Settlement symptoms without lateral pressure</li>";
+    output += "<li>Severe structural failure requiring rebuild</li>";
+    output += "</ul>";
+  }
+  else if (input.includes("sloping") || input.includes("bouncy") || input.includes("doors sticking")) {
+    output += "<b>Permanently Stabilize Floor Framing System</b><br><br>";
+    output += "<b>When NOT to use:</b><ul>";
+    output += "<li>Perimeter foundation settlement (use piers)</li>";
+    output += "<li>Rot damage without repair scope</li>";
+    output += "</ul>";
+  }
+  else if (input.includes("uneven") || input.includes("driveway") || input.includes("trip hazard")) {
+    output += "<b>Stabilize Your Concrete</b><br><br>";
+    output += "<b>When NOT to use:</b><ul>";
+    output += "<li>Severely broken slab needing replacement</li>";
+    output += "<li>Active plumbing leak under slab</li>";
+    output += "</ul>";
+  }
+  else {
+    output += "No strong match found. Add more detail.";
+  }
+
+  results.innerHTML = output;
+}
+
+</script>
+
+</body>
+</html>
